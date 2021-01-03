@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 )
 
 // {"id": 0, "name": "All", "count": 240, "resource_url": "https://api.discogs.com/users/stmcallister/collection/folders/0"}
@@ -110,9 +111,8 @@ func (c *Client) GetUserCollectionItemsByRelease(ctx context.Context, username s
 }
 
 // GetUserCollectionItemsByFolder is a function for getting a single release
-// ?page=1&sort=artist%2Cdesc&folder=2368501&limit=50
-func (c *Client) GetUserCollectionItemsByFolder(ctx context.Context, username string, folderID int) (*ReleaseList, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/users/%s/collection/folders/%d/releases", c.baseURL, username, folderID), nil)
+func (c *Client) GetUserCollectionItemsByFolder(ctx context.Context, username, sort string, folderID, page, per int) (*ReleaseList, error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/users/%s/collection/folders/%d/releases?page=%d&sort=%s&per_page=%d", c.baseURL, username, folderID, page, sort, per), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -125,4 +125,32 @@ func (c *Client) GetUserCollectionItemsByFolder(ctx context.Context, username st
 	}
 
 	return &res, nil
+}
+
+// GetUserCollectionAllItemsByFolder continues to call GetUserCollectionItemsByFolder until all Items are returned
+func (c *Client) GetUserCollectionAllItemsByFolder(ctx context.Context, username, sort string, folderID int) (*ReleaseList, error) {
+	page := 1
+	per := 100
+	res := new(ReleaseList)
+	res.Releases = make([]*CollectionRelease, 0)
+	key := os.Getenv("DISCOGS_API_KEY")
+	client := NewClient(key)
+
+	if temp, err := client.GetUserCollectionItemsByFolder(ctx, username, sort, folderID, page, per); err != nil {
+		return nil, err
+	} else {
+		res.Releases = append(res.Releases, temp.Releases...)
+
+		for temp.Pagination.Pages > 1 && temp.Pagination.Page < temp.Pagination.Pages {
+			// increase page
+			fmt.Printf("> > > Moody Page: %d\n", temp.Pagination.Page)
+			nextPage := temp.Pagination.Page + 1
+			if temp, err = client.GetUserCollectionItemsByFolder(ctx, username, sort, folderID, nextPage, per); err != nil {
+				return nil, err
+			}
+			res.Releases = append(res.Releases, temp.Releases...)
+		}
+	}
+
+	return res, nil
 }
