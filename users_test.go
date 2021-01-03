@@ -119,12 +119,6 @@ func TestDiscogs_UsersGetAllUserCollectionItemsByFolder(t *testing.T) {
 }
 
 func printCollectionItems(res *ReleaseList) {
-	// fmt.Printf("\n Pagination Per Page: %d ", res.Pagination.PerPage)
-	// fmt.Printf("\n Pagination Items: %d ", res.Pagination.Items)
-	// fmt.Printf("\n Pagination Page: %d ", res.Pagination.Page)
-	// fmt.Printf("\n Pagination URLs: %v ", res.Pagination.URLs)
-	// fmt.Printf("\n Pagination Pages: %d \n", res.Pagination.Pages)
-
 	for i, rel := range res.Releases {
 		fmt.Printf("\n\nID: %d\n", rel.ID)
 		fmt.Printf("Title: %s\n", rel.BasicInformation.Title)

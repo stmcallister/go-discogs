@@ -18,6 +18,9 @@ This library is still a work in progress. Here are the functions it contains at 
     - By Page
     - Get All Items
 
+**Masters**
+- Get Master Release
+
 ## TODO
 - Update Release User Rating
 - Delete Release User Rating

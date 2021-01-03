@@ -143,7 +143,6 @@ func (c *Client) GetUserCollectionAllItemsByFolder(ctx context.Context, username
 
 		for temp.Pagination.Pages > 1 && temp.Pagination.Page < temp.Pagination.Pages {
 			// increase page
-			fmt.Printf("> > > Moody Page: %d\n", temp.Pagination.Page)
 			nextPage := temp.Pagination.Page + 1
 			if temp, err = client.GetUserCollectionItemsByFolder(ctx, username, sort, folderID, nextPage, per); err != nil {
 				return nil, err
