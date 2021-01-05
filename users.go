@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 )
 
 // {"id": 0, "name": "All", "count": 240, "resource_url": "https://api.discogs.com/users/stmcallister/collection/folders/0"}
@@ -133,10 +132,8 @@ func (c *Client) GetUserCollectionAllItemsByFolder(ctx context.Context, username
 	per := 100
 	res := new(ReleaseList)
 	res.Releases = make([]*CollectionRelease, 0)
-	key := os.Getenv("DISCOGS_API_KEY")
-	client := NewClient(key)
 
-	if temp, err := client.GetUserCollectionItemsByFolder(ctx, username, sort, folderID, page, per); err != nil {
+	if temp, err := c.GetUserCollectionItemsByFolder(ctx, username, sort, folderID, page, per); err != nil {
 		return nil, err
 	} else {
 		res.Releases = append(res.Releases, temp.Releases...)
@@ -144,7 +141,7 @@ func (c *Client) GetUserCollectionAllItemsByFolder(ctx context.Context, username
 		for temp.Pagination.Pages > 1 && temp.Pagination.Page < temp.Pagination.Pages {
 			// increase page
 			nextPage := temp.Pagination.Page + 1
-			if temp, err = client.GetUserCollectionItemsByFolder(ctx, username, sort, folderID, nextPage, per); err != nil {
+			if temp, err = c.GetUserCollectionItemsByFolder(ctx, username, sort, folderID, nextPage, per); err != nil {
 				return nil, err
 			}
 			res.Releases = append(res.Releases, temp.Releases...)
