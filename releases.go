@@ -8,40 +8,40 @@ import (
 
 // Release represents a release object from discogs
 type Release struct {
-	ID                int           `json:"id"`
-	Status            string        `json:"status"`
-	Title             string        `json:"title"`
-	Year              int           `json:"year"`
-	ResourceURL       string        `json:"resource_url"`
-	URI               string        `json:"uri"`
-	Artists           []*Artist     `json:"artists"`
-	ArtistsSort       string        `json:"artists_sort"`
-	Series            []interface{} `json:"series"`
-	Labels            []*Entity     `json:"labels"`
-	Companies         []*Entity     `json:"companies"`
-	Formats           []*Format     `json:"formats"`
-	DataQuality       string        `json:"data_quality"`
-	Community         Community     `json:"community"`
-	FormatQuantity    int           `json:"format_quantity"`
-	DateAdded         string        `json:"date_added"`
-	DateChanged       string        `json:"date_changed"`
-	NumForSale        int           `json:"num_for_sale"`
-	LowestPrice       float32       `json:"lowest_price"`
-	MasterID          int           `json:"master_id"`
-	MasterURL         string        `json:"master_url"`
-	Country           string        `json:"country"`
-	Released          string        `json:"released"`
-	Notes             string        `json:"notes"`
-	ReleasedFormatted string        `json:"released_formatted"`
-	Identifiers       []*Identifier `json:"identifiers"`
-	Videos            []*Video      `json:"videos"`
-	Genres            []string      `json:"genres"`
-	Styles            []string      `json:"styles"`
-	Tracklist         []*Track      `json:"tracklist"`
-	ExtraArtists      []*Artist     `json:"extraartists"`
-	Images            []*Image      `json:"images"`
-	Thumb             string        `json:"thumb"`
-	EstimatedWeight   int           `json:"estimated_weight"`
+	ID                int              `json:"id"`
+	Status            string           `json:"status"`
+	Title             string           `json:"title"`
+	Year              int              `json:"year"`
+	ResourceURL       string           `json:"resource_url"`
+	URI               string           `json:"uri"`
+	Artists           []*ReleaseArtist `json:"artists"`
+	ArtistsSort       string           `json:"artists_sort"`
+	Series            []interface{}    `json:"series"`
+	Labels            []*Entity        `json:"labels"`
+	Companies         []*Entity        `json:"companies"`
+	Formats           []*Format        `json:"formats"`
+	DataQuality       string           `json:"data_quality"`
+	Community         Community        `json:"community"`
+	FormatQuantity    int              `json:"format_quantity"`
+	DateAdded         string           `json:"date_added"`
+	DateChanged       string           `json:"date_changed"`
+	NumForSale        int              `json:"num_for_sale"`
+	LowestPrice       float32          `json:"lowest_price"`
+	MasterID          int              `json:"master_id"`
+	MasterURL         string           `json:"master_url"`
+	Country           string           `json:"country"`
+	Released          string           `json:"released"`
+	Notes             string           `json:"notes"`
+	ReleasedFormatted string           `json:"released_formatted"`
+	Identifiers       []*Identifier    `json:"identifiers"`
+	Videos            []*Video         `json:"videos"`
+	Genres            []string         `json:"genres"`
+	Styles            []string         `json:"styles"`
+	Tracklist         []*Track         `json:"tracklist"`
+	ExtraArtists      []*ReleaseArtist `json:"extraartists"`
+	Images            []*Image         `json:"images"`
+	Thumb             string           `json:"thumb"`
+	EstimatedWeight   int              `json:"estimated_weight"`
 }
 
 // Image represents image
@@ -118,8 +118,8 @@ type Entity struct {
 	ResourceURL    string `json:"resource_url"`
 }
 
-// Artist represents an artist object from discogs
-type Artist struct {
+// ReleaseArtist represents an artist object from discogs
+type ReleaseArtist struct {
 	Name        string `json:"name"`
 	Anv         string `json:"anv"`
 	Join        string `json:"join"`
