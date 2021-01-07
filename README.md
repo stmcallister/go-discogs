@@ -20,7 +20,17 @@ This library is still a work in progress. Here are the functions it contains at 
 
 **Masters**
 - Get Master Release
+- Get Master Release Versions
+    - By Page
+    - Get All Items
+
+**Artists**
+- Get Artist
+- Get Artist Releases
+    - By Page
+    - Get All Items
 
 ## TODO
 - Update Release User Rating
 - Delete Release User Rating
+- And, lots more. :) 
