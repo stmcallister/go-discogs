@@ -98,12 +98,14 @@ func (c *Client) GetAllArtistReleases(ctx context.Context, sort, order string, I
 	res := new(ArtistReleaseList)
 	res.Releases = make([]*ArtistRelease, 0)
 
+	// NOTE: this gets hung up periodically, if there are > 30 pages or so. Look at ways to optimize
 	if temp, err := c.GetArtistReleases(ctx, sort, order, ID, page, per); err != nil {
 		return nil, err
 	} else {
 		res.Releases = append(res.Releases, temp.Releases...)
-
+		fmt.Printf("Artist Releases Pagination.Pages: %v", temp.Pagination.Pages)
 		for temp.Pagination.Pages > 1 && temp.Pagination.Page < temp.Pagination.Pages {
+			fmt.Printf("Artist Releases Pagination.Page: %v\n", temp.Pagination.Page)
 			// increase page
 			nextPage := temp.Pagination.Page + 1
 			if temp, err = c.GetArtistReleases(ctx, sort, order, ID, nextPage, per); err != nil {

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/http/httputil"
 	"time"
 )
 
@@ -46,12 +47,12 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 	req.Header.Set("Authorization", fmt.Sprintf("Discogs token=%s", c.apiKey))
 
 	// debugging
-	// dump, err := httputil.DumpRequestOut(req, true)
-	// if err != nil {
-	// 	fmt.Printf(err.Error())
-	// }
+	dump, err := httputil.DumpRequestOut(req, true)
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
 
-	// fmt.Printf("%s\n\n", dump)
+	fmt.Printf("%s\n\n", dump)
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
@@ -77,11 +78,11 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 	}
 
 	// debugging
-	// if resDump, err := httputil.DumpResponse(res, true); err != nil {
-	// 	fmt.Printf(err.Error())
-	// } else {
-	// 	fmt.Printf("%s\n\n", resDump)
-	// }
+	if resDump, err := httputil.DumpResponse(res, true); err != nil {
+		fmt.Printf(err.Error())
+	} else {
+		fmt.Printf("%s\n\n", resDump)
+	}
 
 	if err = json.NewDecoder(res.Body).Decode(&fullResponse.Data); err != nil {
 		return err

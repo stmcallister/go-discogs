@@ -1,7 +1,9 @@
 package discogs
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -142,6 +144,11 @@ type ReleaseRating struct {
 	Rating    *Rating `json:"rating"`
 }
 
+// ReleaseRatingRequest is a struct for the request object required to set a rating on a release
+type ReleaseRatingRequest struct {
+	Rating int `json:"rating"`
+}
+
 // ReleaseStats represents the stats for a release
 type ReleaseStats struct {
 	IsOffensive bool `json:"is_offensive"`
@@ -210,6 +217,31 @@ func (c *Client) GetReleaseStats(ctx context.Context, ID int) (*ReleaseStats, er
 	req = req.WithContext(ctx)
 
 	rat := ReleaseStats{}
+	if err := c.sendRequest(req, &rat); err != nil {
+		return nil, err
+	}
+
+	return &rat, nil
+}
+
+// UpdateReleaseRating is a function that updates a release's rating for a given user
+func (c *Client) UpdateReleaseRating(ctx context.Context, ID, rating int, username string) (*ReleaseUserRating, error) {
+	ratingReq := ReleaseRatingRequest{
+		Rating: rating,
+	}
+	ratingJSON, err := json.Marshal(ratingReq)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/releases/%d/rating/%s", c.baseURL, ID, username), bytes.NewBuffer(ratingJSON))
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+
+	rat := ReleaseUserRating{}
 	if err := c.sendRequest(req, &rat); err != nil {
 		return nil, err
 	}
