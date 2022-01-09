@@ -51,11 +51,19 @@ type BasicInformation struct {
 
 // Pagination is the struct that represents pagination objects in list objects (this will probably go somwhere else eventually)
 type Pagination struct {
-	PerPage int         `json:"per_page"`
-	Items   int         `json:"items"`
-	Page    int         `json:"page"`
-	URLs    interface{} `json:"urls"`
-	Pages   int         `json:"pages"`
+	PerPage int            `json:"per_page"`
+	Items   int            `json:"items"`
+	Page    int            `json:"page"`
+	URLs    PaginationURLs `json:"urls"`
+	Pages   int            `json:"pages"`
+}
+
+// PaginationURLs is the struct that represeeents the urls object in the pagination object
+type PaginationURLs struct {
+	First    *string `json:"first"`
+	Previous *string `json:"previous"`
+	Next     *string `json:"next"`
+	Last     *string `json:"last"'`
 }
 
 // GetUserCollectionFolders is a function for getting a single release

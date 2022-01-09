@@ -9,11 +9,11 @@ import (
 // Artist represents an artist in discogs
 type Artist struct {
 	Name           string   `json:"name"`
-	RealName       string   `json:"real_name"`
+	RealName       string   `json:"realname"`
 	ID             int      `json:"id"`
 	ResourceURL    string   `json:"resource_url"`
 	URI            string   `json:"uri"`
-	ReleasesURL    string   `json:"release_url"`
+	ReleasesURL    string   `json:"releases_url"`
 	Images         []*Image `json:"images"`
 	Profile        string   `json:"profile"`
 	URLs           []string `json:"urls"`
@@ -53,8 +53,10 @@ type ArtistRelease struct {
 	Role        string `json:"role"`
 	Thumb       string `json:"thumb"`
 	Title       string `json:"title"`
-	Type        string `json:"master"`
+	Type        string `json:"type"`
 	Year        int    `json:"year"`
+	Format      string `json:"format"`
+	Label       string `json:"label"`
 }
 
 // GetArtist is a function for getting a single artist
