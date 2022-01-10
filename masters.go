@@ -83,7 +83,7 @@ func (c *Client) GetMasterReleaseVersions(ctx context.Context, ID, page, per int
 	// note: only added parameters for pagination, didn't want to initially confuse things by adding all possible parameters, when the others
 	// didn't feel as widely used. please post issue or PR to project if you need the other parameters
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/masters/%d/versions?page=%d&per_page=%d&sort=%s&sort_order=%s", c.baseURL, ID, page, per, sort, sortOrder), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf(	"%s/masters/%d/versions?page=%d&per_page=%d&sort=%s&sort_order=%s", c.baseURL, ID, page, per, sort, sortOrder), nil)
 	if err != nil {
 		return nil, err
 	}
