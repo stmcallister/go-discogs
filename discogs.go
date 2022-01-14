@@ -50,7 +50,6 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 	//if err != nil {
 	//	fmt.Printf(err.Error())
 	//}
-
 	//fmt.Printf("%s\n\n", dump)
 
 	res, err := c.HTTPClient.Do(req)
