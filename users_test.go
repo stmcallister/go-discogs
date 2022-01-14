@@ -2,146 +2,348 @@ package discogs
 
 import (
 	"context"
-	"fmt"
-	"os"
+	"net/http"
 	"testing"
 )
 
 func TestDiscogs_UsersGetCollectionFolders(t *testing.T) {
-	// todo: make real unit tests using MUX
-	key := os.Getenv("DISCOGS_API_KEY")
-	client := NewClient(key)
-	ctx := context.Background()
-	username := "stmcallister"
+	setup()
+	defer teardown()
 
-	if res, err := client.GetUserCollectionFolders(ctx, username); err != nil {
-		panic(err)
-	} else {
-		for _, f := range res.Folders {
-			fmt.Printf("\nFolder name: %s (%d)", f.Name, f.ID)
-			fmt.Printf("\nFolder count: %d \n", f.Count)
-			fmt.Println("--")
-		}
+	mux.HandleFunc("/users/testuser/collection/folders", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, http.MethodGet)
+		_, _ = w.Write([]byte(`{"folders": [{"id": 0, "name": "All", "count": 253, "resource_url": "https://api.discogs.com/users/stmcallister/collection/folders/0"}, {"id": 2368502, "name": "*\\WorkTunes/*", "count": 0, "resource_url": "https://api.discogs.com/users/stmcallister/collection/folders/2368502"}, {"id": 2368501, "name": "lp", "count": 220, "resource_url": "https://api.discogs.com/users/stmcallister/collection/folders/2368501"}, {"id": 2298906, "name": "Seven inch", "count": 29, "resource_url": "https://api.discogs.com/users/stmcallister/collection/folders/2298906"}, {"id": 1, "name": "Uncategorized", "count": 4, "resource_url": "https://api.discogs.com/users/stmcallister/collection/folders/1"}]}`))
+	})
+	client := defaultTestClient(server.URL, "foo")
+
+	ctx := context.Background()
+	username := "testuser"
+	folders, err := client.GetUserCollectionFolders(ctx, username)
+
+	if err != nil {
+		t.Fatal(err)
 	}
+	want := &FolderList{
+		Folders: []*Folder{
+			{
+				ID:          0,
+				Name:        "All",
+				Count:       253,
+				ResourceURL: "https://api.discogs.com/users/stmcallister/collection/folders/0",
+			},
+			{
+				ID:          2368502,
+				Name:        "*\\WorkTunes/*",
+				Count:       0,
+				ResourceURL: "https://api.discogs.com/users/stmcallister/collection/folders/2368502",
+			},
+			{
+				ID:          2368501,
+				Name:        "lp",
+				Count:       220,
+				ResourceURL: "https://api.discogs.com/users/stmcallister/collection/folders/2368501",
+			},
+			{
+				ID:          2298906,
+				Name:        "Seven inch",
+				Count:       29,
+				ResourceURL: "https://api.discogs.com/users/stmcallister/collection/folders/2298906",
+			},
+			{
+				ID:          1,
+				Name:        "Uncategorized",
+				Count:       4,
+				ResourceURL: "https://api.discogs.com/users/stmcallister/collection/folders/1",
+			},
+		},
+	}
+
+	testEqual(t, want, folders)
 }
 
 func TestDiscogs_UsersGetCollectionFolder(t *testing.T) {
-	// todo: make real unit tests using MUX
-	key := os.Getenv("DISCOGS_API_KEY")
-	client := NewClient(key)
-	ctx := context.Background()
-	username := "stmcallister"
-	folderID := 2368501
+	setup()
+	defer teardown()
 
-	if res, err := client.GetUserCollectionFolder(ctx, username, folderID); err != nil {
-		panic(err)
-	} else {
-		fmt.Printf("\nFolder name: %s (%d)", res.Name, res.ID)
-		fmt.Printf("\nFolder count: %d \n", res.Count)
+	mux.HandleFunc("/users/testuser/collection/folders/0", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, http.MethodGet)
+		_, _ = w.Write([]byte(`{"id": 0, "name": "All", "count": 253, "resource_url": "https://api.discogs.com/users/stmcallister/collection/folders/0"}`))
+	})
+	client := defaultTestClient(server.URL, "foo")
+
+	ctx := context.Background()
+	username := "testuser"
+	ID := 0
+
+	folder, err := client.GetUserCollectionFolder(ctx, username, ID)
+
+	if err != nil {
+		t.Fatal(err)
 	}
+	want := &Folder{
+		ID:          0,
+		Name:        "All",
+		Count:       253,
+		ResourceURL: "https://api.discogs.com/users/stmcallister/collection/folders/0",
+	}
+
+	testEqual(t, want, folder)
 }
 
 func TestDiscogs_UsersGetUserCollectionItemsByRelease(t *testing.T) {
-	// todo: make real unit tests using MUX
-	key := os.Getenv("DISCOGS_API_KEY")
-	client := NewClient(key)
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/users/testuser/collection/releases/0", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, http.MethodGet)
+		_, _ = w.Write([]byte(`{"pagination":{"page":1,"pages":1,"per_page":50,"items":1},"releases":[{"id":892155,"instance_id":498658685,"date_added":"2020-08-16T21:43:39-07:00","rating":0,"basic_information":{"master_id":36390,"master_url":"https://api.discogs.com/masters/36390","title":"Mary Star Of The Sea","year":2003,"formats":[{"name":"Vinyl","qty":"2","descriptions":["LP","Album"]}],"labels":[{"name":"Martha's Music","catno":"9362-48436-1","entity_type":"1","entity_type_name":"Label","id":36917,"resource_url":"https://api.discogs.com/labels/36917"},{"name":"Reprise Records","catno":"9362-48436-1","entity_type":"1","entity_type_name":"Label","id":157,"resource_url":"https://api.discogs.com/labels/157"}],"artists":[{"name":"Zwan","id":277868,"resource_url":"https://api.discogs.com/artists/277868"}],"genres":["Rock"],"styles":["Alternative Rock"]},"folder_id":2368501}]}`))
+	})
+	client := defaultTestClient(server.URL, "foo")
+
 	ctx := context.Background()
-	username := "stmcallister"
-	rid := 1964222
+	username := "testuser"
+	ID := 0
 
-	if res, err := client.GetUserCollectionItemsByRelease(ctx, username, rid); err != nil {
-		panic(err)
-	} else {
-		fmt.Printf("\n Pagination Per Page: %d ", res.Pagination.PerPage)
-		fmt.Printf("\n Pagination Items: %d ", res.Pagination.Items)
-		fmt.Printf("\n Pagination Page: %d ", res.Pagination.Page)
-		fmt.Printf("\n Pagination URLs: %v ", res.Pagination.URLs)
-		fmt.Printf("\n Pagination Pages: %d \n", res.Pagination.Pages)
-
-		for _, rel := range res.Releases {
-			fmt.Printf("\n\nID: %d\n", rel.ID)
-			fmt.Printf("Title: %s\n", rel.BasicInformation.Title)
-			fmt.Printf("Year: %d\n", rel.BasicInformation.Year)
-			for _, artist := range rel.BasicInformation.Artists {
-				fmt.Printf("Artist Name: %s (%d)\n", artist.Name, artist.ID)
-			}
-			for _, label := range rel.BasicInformation.Labels {
-				fmt.Printf("Label Name: %s (%d)\n", label.Name, label.ID)
-				fmt.Printf("Label Catno: %s \n", label.Catno)
-			}
-			for _, f := range rel.BasicInformation.Formats {
-				fmt.Printf("Format: %s \n", f.Name)
-			}
-			fmt.Printf("MasterID: %d \n", rel.BasicInformation.MasterID)
-			fmt.Printf("MasterURL: %s \n", rel.BasicInformation.MasterURL)
-			for _, g := range rel.BasicInformation.Genres {
-				fmt.Printf("Genre: %s \n", g)
-			}
-			for _, s := range rel.BasicInformation.Styles {
-				fmt.Printf("Style: %s \n", s)
-			}
-			fmt.Printf("FolderID: %d\n", rel.FolderID)
-		}
+	rels, err := client.GetUserCollectionItemsByRelease(ctx, username, ID)
+	if err != nil {
+		t.Fatal(err)
 	}
+
+	want := &ReleaseList{
+		Pagination: &Pagination{
+			Page:    1,
+			Pages:   1,
+			PerPage: 50,
+			Items:   1,
+		},
+		Releases: []*CollectionRelease{
+			{
+				ID:         892155,
+				InstanceID: 498658685,
+				DateAdded:  "2020-08-16T21:43:39-07:00",
+				Rating:     0,
+				BasicInformation: &BasicInformation{
+					MasterID:  36390,
+					MasterURL: "https://api.discogs.com/masters/36390",
+					Title:     "Mary Star Of The Sea",
+					Year:      2003,
+					Formats: []*Format{
+						{
+							Name: "Vinyl",
+							Qty:  "2",
+							Descriptions: []string{
+								"LP",
+								"Album",
+							},
+						},
+					},
+					Labels: []*Entity{
+						{
+							Name:           "Martha's Music",
+							Catno:          "9362-48436-1",
+							EntityType:     "1",
+							EntityTypeName: "Label",
+							ID:             36917,
+							ResourceURL:    "https://api.discogs.com/labels/36917",
+						},
+						{
+							Name:           "Reprise Records",
+							Catno:          "9362-48436-1",
+							EntityType:     "1",
+							EntityTypeName: "Label",
+							ID:             157,
+							ResourceURL:    "https://api.discogs.com/labels/157",
+						},
+					},
+					Artists: []*Artist{
+						{
+							Name:        "Zwan",
+							ID:          277868,
+							ResourceURL: "https://api.discogs.com/artists/277868",
+						},
+					},
+					Genres: []string{
+						"Rock",
+					},
+					Styles: []string{
+						"Alternative Rock",
+					},
+				},
+				FolderID: 2368501,
+			},
+		},
+	}
+
+	testEqual(t, want, rels)
 }
 
 func TestDiscogs_UsersGetUserCollectionItemsByFolder(t *testing.T) {
-	// todo: make real unit tests using MUX
-	key := os.Getenv("DISCOGS_API_KEY")
-	client := NewClient(key)
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/users/testuser/collection/folders/1/releases", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, http.MethodGet)
+		_, _ = w.Write([]byte(`{"pagination":{"page":1,"pages":1,"per_page":50,"items":1},"releases":[{"id":892155,"instance_id":498658685,"date_added":"2020-08-16T21:43:39-07:00","rating":0,"basic_information":{"master_id":36390,"master_url":"https://api.discogs.com/masters/36390","title":"Mary Star Of The Sea","year":2003,"formats":[{"name":"Vinyl","qty":"2","descriptions":["LP","Album"]}],"labels":[{"name":"Martha's Music","catno":"9362-48436-1","entity_type":"1","entity_type_name":"Label","id":36917,"resource_url":"https://api.discogs.com/labels/36917"},{"name":"Reprise Records","catno":"9362-48436-1","entity_type":"1","entity_type_name":"Label","id":157,"resource_url":"https://api.discogs.com/labels/157"}],"artists":[{"name":"Zwan","id":277868,"resource_url":"https://api.discogs.com/artists/277868"}],"genres":["Rock"],"styles":["Alternative Rock"]},"folder_id":2368501}]}`))
+	})
+	client := defaultTestClient(server.URL, "foo")
+
 	ctx := context.Background()
-	username := "stmcallister"
-	fid := 2368501
+	username := "testuser"
+	folderID := 1
 	sort := "artist"
 	page := 1
 	per := 100
 
-	if res, err := client.GetUserCollectionItemsByFolder(ctx, username, sort, fid, page, per); err != nil {
-		panic(err)
-	} else {
-		printCollectionItems(res)
+	rels, err := client.GetUserCollectionItemsByFolder(ctx, username, sort, folderID, page, per)
+	if err != nil {
+		t.Fatal(err)
 	}
+
+	want := &ReleaseList{
+		Pagination: &Pagination{
+			Page:    1,
+			Pages:   1,
+			PerPage: 50,
+			Items:   1,
+		},
+		Releases: []*CollectionRelease{
+			{
+				ID:         892155,
+				InstanceID: 498658685,
+				DateAdded:  "2020-08-16T21:43:39-07:00",
+				Rating:     0,
+				BasicInformation: &BasicInformation{
+					MasterID:  36390,
+					MasterURL: "https://api.discogs.com/masters/36390",
+					Title:     "Mary Star Of The Sea",
+					Year:      2003,
+					Formats: []*Format{
+						{
+							Name: "Vinyl",
+							Qty:  "2",
+							Descriptions: []string{
+								"LP",
+								"Album",
+							},
+						},
+					},
+					Labels: []*Entity{
+						{
+							Name:           "Martha's Music",
+							Catno:          "9362-48436-1",
+							EntityType:     "1",
+							EntityTypeName: "Label",
+							ID:             36917,
+							ResourceURL:    "https://api.discogs.com/labels/36917",
+						},
+						{
+							Name:           "Reprise Records",
+							Catno:          "9362-48436-1",
+							EntityType:     "1",
+							EntityTypeName: "Label",
+							ID:             157,
+							ResourceURL:    "https://api.discogs.com/labels/157",
+						},
+					},
+					Artists: []*Artist{
+						{
+							Name:        "Zwan",
+							ID:          277868,
+							ResourceURL: "https://api.discogs.com/artists/277868",
+						},
+					},
+					Genres: []string{
+						"Rock",
+					},
+					Styles: []string{
+						"Alternative Rock",
+					},
+				},
+				FolderID: 2368501,
+			},
+		},
+	}
+
+	testEqual(t, want, rels)
 }
+
 func TestDiscogs_UsersGetAllUserCollectionItemsByFolder(t *testing.T) {
-	// todo: make real unit tests using MUX
-	key := os.Getenv("DISCOGS_API_KEY")
-	client := NewClient(key)
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/users/testuser/collection/folders/1/releases", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, http.MethodGet)
+		_, _ = w.Write([]byte(`{"pagination":{"page":1,"pages":1,"per_page":50,"items":1},"releases":[{"id":892155,"instance_id":498658685,"date_added":"2020-08-16T21:43:39-07:00","rating":0,"basic_information":{"master_id":36390,"master_url":"https://api.discogs.com/masters/36390","title":"Mary Star Of The Sea","year":2003,"formats":[{"name":"Vinyl","qty":"2","descriptions":["LP","Album"]}],"labels":[{"name":"Martha's Music","catno":"9362-48436-1","entity_type":"1","entity_type_name":"Label","id":36917,"resource_url":"https://api.discogs.com/labels/36917"},{"name":"Reprise Records","catno":"9362-48436-1","entity_type":"1","entity_type_name":"Label","id":157,"resource_url":"https://api.discogs.com/labels/157"}],"artists":[{"name":"Zwan","id":277868,"resource_url":"https://api.discogs.com/artists/277868"}],"genres":["Rock"],"styles":["Alternative Rock"]},"folder_id":2368501}]}`))
+	})
+	client := defaultTestClient(server.URL, "foo")
+
 	ctx := context.Background()
-	username := "stmcallister"
-	fid := 2368501
+	username := "testuser"
+	folderID := 1
 	sort := "artist"
 
-	if res, err := client.GetUserCollectionAllItemsByFolder(ctx, username, sort, fid); err != nil {
-		panic(err)
-	} else {
-		printCollectionItems(res)
+	rels, err := client.GetUserCollectionAllItemsByFolder(ctx, username, sort, folderID)
+	if err != nil {
+		t.Fatal(err)
 	}
-}
 
-func printCollectionItems(res *ReleaseList) {
-	for i, rel := range res.Releases {
-		fmt.Printf("\n\nID: %d\n", rel.ID)
-		fmt.Printf("Title: %s\n", rel.BasicInformation.Title)
-		fmt.Printf("Year: %d\n", rel.BasicInformation.Year)
-		for _, artist := range rel.BasicInformation.Artists {
-			fmt.Printf("Artist Name: %s (%d)\n", artist.Name, artist.ID)
-		}
-		for _, label := range rel.BasicInformation.Labels {
-			fmt.Printf("Label Name: %s (%d)\n", label.Name, label.ID)
-			fmt.Printf("Label Catno: %s \n", label.Catno)
-		}
-		for _, f := range rel.BasicInformation.Formats {
-			fmt.Printf("Format: %s \n", f.Name)
-		}
-		fmt.Printf("MasterID: %d \n", rel.BasicInformation.MasterID)
-		fmt.Printf("MasterURL: %s \n", rel.BasicInformation.MasterURL)
-		for _, g := range rel.BasicInformation.Genres {
-			fmt.Printf("Genre: %s \n", g)
-		}
-		for _, s := range rel.BasicInformation.Styles {
-			fmt.Printf("Style: %s \n", s)
-		}
-		fmt.Printf("FolderID: %d\n", rel.FolderID)
-		fmt.Printf("# %d\n", i)
+	want := &ReleaseList{
+		Releases: []*CollectionRelease{
+			{
+				ID:         892155,
+				InstanceID: 498658685,
+				DateAdded:  "2020-08-16T21:43:39-07:00",
+				Rating:     0,
+				BasicInformation: &BasicInformation{
+					MasterID:  36390,
+					MasterURL: "https://api.discogs.com/masters/36390",
+					Title:     "Mary Star Of The Sea",
+					Year:      2003,
+					Formats: []*Format{
+						{
+							Name: "Vinyl",
+							Qty:  "2",
+							Descriptions: []string{
+								"LP",
+								"Album",
+							},
+						},
+					},
+					Labels: []*Entity{
+						{
+							Name:           "Martha's Music",
+							Catno:          "9362-48436-1",
+							EntityType:     "1",
+							EntityTypeName: "Label",
+							ID:             36917,
+							ResourceURL:    "https://api.discogs.com/labels/36917",
+						},
+						{
+							Name:           "Reprise Records",
+							Catno:          "9362-48436-1",
+							EntityType:     "1",
+							EntityTypeName: "Label",
+							ID:             157,
+							ResourceURL:    "https://api.discogs.com/labels/157",
+						},
+					},
+					Artists: []*Artist{
+						{
+							Name:        "Zwan",
+							ID:          277868,
+							ResourceURL: "https://api.discogs.com/artists/277868",
+						},
+					},
+					Genres: []string{
+						"Rock",
+					},
+					Styles: []string{
+						"Alternative Rock",
+					},
+				},
+				FolderID: 2368501,
+			},
+		},
 	}
+	testEqual(t, want, rels)
 }

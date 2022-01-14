@@ -23,13 +23,13 @@ func TestDiscogs_MastersGet(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := &Master{
-		ID:          ID,
-		Year:        1987,
-		MainRelease: 742394,
-		VersionsURL: "https://api.discogs.com/masters/96554/versions",
+		ID:             ID,
+		Year:           1987,
+		MainRelease:    742394,
+		VersionsURL:    "https://api.discogs.com/masters/96554/versions",
 		MainReleaseURL: "https://api.discogs.com/releases/742394",
-		ResourceURL: "https://api.discogs.com/masters/96554",
-		URI:         "https://www.discogs.com/master/96554-Rick-Astley-It-Would-Take-A-Strong-Strong-Man",
+		ResourceURL:    "https://api.discogs.com/masters/96554",
+		URI:            "https://www.discogs.com/master/96554-Rick-Astley-It-Would-Take-A-Strong-Strong-Man",
 		Artists: []*Artist{
 			{
 				Name:        "Rick Astley",
@@ -38,9 +38,9 @@ func TestDiscogs_MastersGet(t *testing.T) {
 			},
 		},
 		DataQuality: "Correct",
-		NumForSale:        339,
-		LowestPrice:       0.49,
-		Title:             "It Would Take A Strong Strong Man",
+		NumForSale:  339,
+		LowestPrice: 0.49,
+		Title:       "It Would Take A Strong Strong Man",
 		Videos: []*Video{
 			{
 				URI:         "https://www.youtube.com/watch?v=hxoAMnMBiM0",
@@ -110,11 +110,11 @@ func TestDiscogs_MastersGetVersions(t *testing.T) {
 	format := "Cassette"
 
 	want := &VersionList{
-		Pagination: &Pagination {
-			Page: 1,
-			Pages: 1,
+		Pagination: &Pagination{
+			Page:    1,
+			Pages:   1,
 			PerPage: 50,
-			Items: 11,
+			Items:   11,
 		},
 		Versions: []*MasterVersion{
 			{

@@ -190,6 +190,5 @@ func TestDiscogs_ArtistsReleasesGetAll(t *testing.T) {
 		},
 	}
 
-
 	testEqual(t, want, rels)
 }
