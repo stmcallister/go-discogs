@@ -10,7 +10,8 @@ This library is still a work in progress. Here are the functions it contains at 
 - Update Release User Rating
 - Get Release Community Rating
 - Get Release Stats
-
+- Delete Release User Rating
+- 
 **Users**
 - Get User Collection Folders
 - Get User Collection Folder
@@ -32,5 +33,53 @@ This library is still a work in progress. Here are the functions it contains at 
     - Get All Items
 
 ## TODO
-- Delete Release User Rating
+**Label**
+- Get Label
+- Get Label Releases
+- Database Search
+
+**Marketplace**
+- Get User's Inventory
+- Get Marketplace Listing
+- Edit Marketplace Listing
+- Delete Marketplace Listing
+- Create Marketplace Listing
+- Get Marketplace Order
+- Edit Marketplace Order
+- List Marketplace Orders
+- List Order Messages
+- Create Order message
+- Get Fee
+- Get Fee with Currency
+- Get Price Suggestions
+- Get Marketplace Stats for Release
+
+**Inventory Export**
+- Export Inventory to CSV
+- Get Recent Exports
+- Get Export
+- Download Export
+
+**Inventory Upload**
+- Add Inventory
+- Change Inventory
+- Delete Inventory
+- Get Recent Uploads
+- Get an Upload
+
+**User Identity**
+- Get Identity
+- Get Profile
+- Edit Profile Data
+- Get User Submissions
+- Get User Contributions
+
+**User Collection**
+- Create User Folder
+- Edit Collection Folder
+- Delete Folder
+- Add Release to Folder
+- Change Rating of Release
+- 
+
 - And, lots more. :) 
