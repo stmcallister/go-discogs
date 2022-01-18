@@ -224,8 +224,8 @@ func (c *Client) GetReleaseStats(ctx context.Context, ID int) (*ReleaseStats, er
 	return &rat, nil
 }
 
-// UpdateReleaseRating is a function that updates a release's rating for a given user
-func (c *Client) UpdateReleaseRating(ctx context.Context, ID, rating int, username string) (*ReleaseUserRating, error) {
+// UpdateReleaseUserRating is a function that updates a release's rating for a given user
+func (c *Client) UpdateReleaseUserRating(ctx context.Context, ID, rating int, username string) (*ReleaseUserRating, error) {
 	ratingReq := ReleaseRatingRequest{
 		Rating: rating,
 	}
@@ -247,4 +247,18 @@ func (c *Client) UpdateReleaseRating(ctx context.Context, ID, rating int, userna
 	}
 
 	return &rat, nil
+}
+
+// DeleteReleaseUserRating is a function that updates a release's rating for a given user
+func (c *Client) DeleteReleaseUserRating(ctx context.Context, ID int, username string) error {
+	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/releases/%d/rating/%s", c.baseURL, ID, username), nil)
+	if err != nil {
+		return err
+	}
+
+	req = req.WithContext(ctx)
+	rat := ReleaseUserRating{}
+
+	err = c.sendRequest(req, &rat)
+	return err
 }

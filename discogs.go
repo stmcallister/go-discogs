@@ -83,6 +83,7 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 	//}
 
 	if err = json.NewDecoder(res.Body).Decode(&fullResponse.Data); err != nil {
+		fmt.Printf(`json.Decoder Error: %v`, err.Error())
 		return err
 	}
 	return nil

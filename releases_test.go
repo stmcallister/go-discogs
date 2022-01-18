@@ -257,7 +257,7 @@ func TestDiscogs_ReleasesUpdateUserRating(t *testing.T) {
 	releaseID := 1
 	username := "testuser"
 	rating := 3
-	rat, err := client.UpdateReleaseRating(ctx, releaseID, rating, username)
+	rat, err := client.UpdateReleaseUserRating(ctx, releaseID, rating, username)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -268,4 +268,23 @@ func TestDiscogs_ReleasesUpdateUserRating(t *testing.T) {
 	}
 
 	testEqual(t, want, rat)
+}
+
+func TestDiscogs_ReleasesDeleteUserRating(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/releases/1/rating/testuser", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, http.MethodDelete)
+		_, _ = w.Write([]byte(`{}`))
+	})
+	client := defaultTestClient(server.URL, "foo")
+
+	ctx := context.Background()
+	releaseID := 1
+	username := "testuser"
+	err := client.DeleteReleaseUserRating(ctx, releaseID, username)
+	if err != nil {
+		t.Fatal(err)
+	}
 }
