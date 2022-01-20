@@ -57,3 +57,53 @@ func TestDiscogs_LabelsGet(t *testing.T) {
 	testEqual(t, want, rat)
 
 }
+
+func TestDiscogs_LabelsGetReleases(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/labels/1/releases", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, http.MethodGet)
+		_, _ = w.Write([]byte(`{"pagination":{"page":1,"pages":23,"per_page":50,"items":1139,"urls":{"last":"https://api.discogs.com/labels/9952/releases?page=23&per_page=50","next":"https://api.discogs.com/labels/9952/releases?page=2&per_page=50"}},"releases":[{"status":"Accepted","format":"LP, Album","catno":"53265","thumb":"https://i.discogs.com/BIjbVnDYanYCGqHv1TLWpXf-KU0_3bcLmk1Iu2iCgk4/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWltYWdlcy9SLTEx/MzcwMDI3LTE1MTUw/OTcxNDItNzI1NS5q/cGVn.jpeg","resource_url":"https://api.discogs.com/releases/11370027","title":"False Readings On ","id":11370027,"year":2016,"artist":"Eluvium","stats":{"community":{"in_wantlist":22,"in_collection":57},"user":{"in_wantlist":0,"in_collection":0}}}]}`))
+	})
+	client := defaultTestClient(server.URL, "foo")
+
+	ctx := context.Background()
+	labelID := 1
+	page := 1
+	per := 100
+	rat, err := client.GetLabelReleases(ctx, labelID, page, per)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lastURL := "https://api.discogs.com/labels/9952/releases?page=23&per_page=50"
+	nextURL := "https://api.discogs.com/labels/9952/releases?page=2&per_page=50"
+
+	want := &LabelReleaseList{
+		Pagination: &Pagination{
+			Page:    1,
+			Pages:   23,
+			PerPage: 50,
+			Items:   1139,
+			URLs: PaginationURLs{
+				Last: &lastURL,
+				Next: &nextURL,
+			},
+		},
+		Releases: []*LabelRelease{
+			{
+				Status:      "Accepted",
+				Format:      "LP, Album",
+				CatNo:       "53265",
+				Thumb:       "https://i.discogs.com/BIjbVnDYanYCGqHv1TLWpXf-KU0_3bcLmk1Iu2iCgk4/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWltYWdlcy9SLTEx/MzcwMDI3LTE1MTUw/OTcxNDItNzI1NS5q/cGVn.jpeg",
+				ResourceURL: "https://api.discogs.com/releases/11370027",
+				Title:       "False Readings On ",
+				ID:          11370027,
+				Year:        2016,
+				Artist:      "Eluvium",
+			},
+		},
+	}
+
+	testEqual(t, want, rat)
+}

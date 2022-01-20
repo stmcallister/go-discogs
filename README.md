@@ -35,7 +35,7 @@ This library is still a work in progress. Here are the functions it contains at 
 ## TODO
 **Label**
 - [x] Get Label
-- [ ] Get Label Releases
+- [x] Get Label Releases
 - [ ] Database Search
 
 **Marketplace**
