@@ -107,6 +107,7 @@ type CommunityPerson struct {
 type Format struct {
 	Name         string   `json:"name"`
 	Qty          string   `json:"qty"`
+	Text         string   `json:"text"`
 	Descriptions []string `json:"descriptions"`
 }
 

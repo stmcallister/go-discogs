@@ -36,7 +36,7 @@ This library is still a work in progress. Here are the functions it contains at 
 **Label**
 - [x] Get Label
 - [x] Get Label Releases
-- [ ] Database Search
+- [x] Database Search
 
 **Marketplace**
 - [ ] Get User's Inventory
