@@ -40,7 +40,7 @@ This library is still a work in progress. Here are the functions it contains at 
 
 **Marketplace**
 - [ ] Get User's Inventory
-- [ ] Get Marketplace Listing
+- [x] Get Marketplace Listing
 - [ ] Edit Marketplace Listing
 - [ ] Delete Marketplace Listing
 - [ ] Create Marketplace Listing
