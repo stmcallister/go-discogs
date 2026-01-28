@@ -17,7 +17,7 @@ type Folder struct {
 
 // FolderList is the list response to grabbing a list of folders
 type FolderList struct {
-	Folders []*Folder `jsont:"folders"`
+	Folders []*Folder `json:"folders"`
 }
 
 // ReleaseList is the list response for releases
@@ -38,15 +38,18 @@ type CollectionRelease struct {
 
 // BasicInformation is a stripped down version of the release object used in the CollectionRelease obj
 type BasicInformation struct {
-	Title     string    `json:"title"`
-	Year      int       `json:"year"`
-	Artists   []*Artist `json:"artists"`
-	Labels    []*Entity `json:"labels"`
-	Formats   []*Format `json:"formats"`
-	Genres    []string  `json:"genres"`
-	Styles    []string  `json:"styles"`
-	MasterID  int       `json:"master_id"`
-	MasterURL string    `json:"master_url"`
+	Title       string    `json:"title"`
+	Year        int       `json:"year"`
+	Thumb       string    `json:"thumb"`
+	CoverImage  string    `json:"cover_image"`
+	ResourceURL string    `json:"resource_url"`
+	Artists     []*Artist `json:"artists"`
+	Labels      []*Entity `json:"labels"`
+	Formats     []*Format `json:"formats"`
+	Genres      []string  `json:"genres"`
+	Styles      []string  `json:"styles"`
+	MasterID    int       `json:"master_id"`
+	MasterURL   string    `json:"master_url"`
 }
 
 // Pagination is the struct that represents pagination objects in list objects (this will probably go somwhere else eventually)
