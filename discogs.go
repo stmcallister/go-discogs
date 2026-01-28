@@ -14,7 +14,12 @@ const (
 
 // Client .
 type Client struct {
-	apiKey     string
+	apiKey           string
+	consumerKey      string
+	consumerSecret   string
+	oauthToken       string
+	oauthTokenSecret string
+
 	baseURL    string
 	userAgent  string
 	HTTPClient *http.Client
@@ -31,6 +36,27 @@ func NewClient(apiKey string) *Client {
 	}
 }
 
+// NewOAuthClient creates a client that signs requests with OAuth 1.0a.
+// Pass empty accessToken/accessSecret for the initial request token step.
+func NewOAuthClient(consumerKey, consumerSecret, accessToken, accessSecret string) *Client {
+	return &Client{
+		consumerKey:      consumerKey,
+		consumerSecret:   consumerSecret,
+		oauthToken:       accessToken,
+		oauthTokenSecret: accessSecret,
+		HTTPClient: &http.Client{
+			Timeout: 5 * time.Minute,
+		},
+		baseURL: BaseURL,
+	}
+}
+
+// WithUserAgent sets a Discogs-compliant user agent (required by Discogs policy).
+func (c *Client) WithUserAgent(ua string) *Client {
+	c.userAgent = ua
+	return c
+}
+
 type errorResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -43,7 +69,16 @@ type successResponse struct {
 
 func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	req.Header.Set("Authorization", fmt.Sprintf("Discogs token=%s", c.apiKey))
+	if c.userAgent != "" {
+		req.Header.Set("User-Agent", c.userAgent)
+	}
+
+	// Auth: prefer OAuth if configured; else fall back to personal token.
+	if c.consumerKey != "" && c.consumerSecret != "" {
+		req.Header.Set("Authorization", oauth1AuthorizationHeader(req.Method, req.URL.String(), c.consumerKey, c.consumerSecret, c.oauthToken, c.oauthTokenSecret, nil))
+	} else {
+		req.Header.Set("Authorization", fmt.Sprintf("Discogs token=%s", c.apiKey))
+	}
 
 	// debugging
 	//dump, err := httputil.DumpRequestOut(req, true)
