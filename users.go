@@ -63,7 +63,7 @@ type PaginationURLs struct {
 	First    *string `json:"first"`
 	Previous *string `json:"previous"`
 	Next     *string `json:"next"`
-	Last     *string `json:"last"'`
+	Last     *string `json:"last"`
 }
 
 // GetUserCollectionFolders is a function for getting a single release

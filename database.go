@@ -30,10 +30,10 @@ type SearchResult struct {
 	Formats        []*Format  `json:"formats"`
 }
 type SearchRequest struct {
-	Query        *string `json:"query, omitempty"`
-	Type         *string `json:"type, omitempty"`
-	Title        *string `json:"title, omitempty"`
-	ReleaseTitle *string `json:"release_title, omitempty"`
+	Query        *string `json:"query,omitempty"`
+	Type         *string `json:"type,omitempty"`
+	Title        *string `json:"title,omitempty"`
+	ReleaseTitle *string `json:"release_title,omitempty"`
 	Credit       *string `json:"credit,omitempty"`
 	Artist       *string `json:"artist,omitempty"`
 	Anv          *string `json:"anv,omitempty"`

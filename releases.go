@@ -77,7 +77,7 @@ type Video struct {
 type Identifier struct {
 	Type        string `json:"type"`
 	Value       string `json:"value"`
-	Description string `json:"description, omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 // Community represents community object inside release object
